@@ -1,0 +1,18 @@
+---
+
+- name: install gpg
+  apt:
+    name: gnupg
+    state: present
+    install_recommends: false
+
+- name: install key
+  apt_key:
+    url: https://haproxy.debian.net/bernat.debian.org.gpg
+    state: present
+
+- name: install repo
+  apt_repository:
+    repo: "deb http://haproxy.debian.net {{ ansible_distribution_release }}-backports-{{ haproxy_version }} main"
+    state: present
+    update_cache: true

@@ -1,0 +1,7 @@
+---
+
+- name: install repo
+  apt_repository:
+    repo: "ppa:vbernat/haproxy-{{ haproxy_version }}"
+    state: present
+    update_cache: true

@@ -1,2 +1,29 @@
 ---
 # tasks file for ansible-role-haproxy
+
+- block:
+
+  - include: "repo_{{ ansible_distribution }}.yml"
+    tags:
+      - install
+
+  - name: install
+    apt:
+      name: "{{ haproxy_dependencies + haproxy_pkg is string | ternary([haproxy_pkg], haproxy_pkg) }}"
+      state: present
+      install_recommends: false
+    tags:
+      - install
+
+  - name: setup
+    template:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+      validate: "haproxy -c -f %s"
+    notify: haproxy reload
+    tags:
+      - setup
+
+  become: true
+  tags:
+    - haproxy

@@ -1,2 +1,6 @@
 ---
 # defaults file for ansible-role-haproxy
+
+haproxy_version: 1.8
+haproxy_pkg: "haproxy={{ haproxy_version }}.*"
+haproxy_dependencies: []
