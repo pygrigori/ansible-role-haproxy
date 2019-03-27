@@ -6,8 +6,12 @@ driver:
 lint:
   name: yamllint
 platforms:
-  - name: instance
-    image: centos:7
+  - name: trusty
+    image: ubuntu:trusty
+  - name: xenial
+    image: ubuntu:xenial
+  - name: stretch
+    image: debian:stretch
 provisioner:
   name: ansible
   lint:

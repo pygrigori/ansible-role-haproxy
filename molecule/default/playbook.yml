@@ -3,3 +3,16 @@
   hosts: all
   roles:
     - role: ansible-role-haproxy
+      haproxy_config: |
+        global
+            daemon
+
+        defaults
+            timeout client  60000
+            timeout connect 5000
+            timeout server  60000
+
+        frontend http
+            bind :80
+            mode http
+            http-request deny deny_status 200
