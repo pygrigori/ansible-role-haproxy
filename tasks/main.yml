@@ -3,27 +3,42 @@
 
 - block:
 
-  - include: "repo_{{ ansible_distribution }}.yml"
-    tags:
-      - install
+    - name: install dependencies
+      apt:
+        name: "{{ haproxy_dependencies }}"
+        state: present
+        install_recommends: false
 
-  - name: install
-    apt:
-      name: "{{ haproxy_dependencies + haproxy_pkg is string | ternary([haproxy_pkg], haproxy_pkg) }}"
-      state: present
-      install_recommends: false
-    tags:
-      - install
+    - name: append key
+      apt_key:
+        url: "{{ haproxy_key }}"
+      when: haproxy_key | length
 
-  - name: setup
-    template:
-      src: haproxy.cfg.j2
-      dest: /etc/haproxy/haproxy.cfg
-      validate: "haproxy -c -f %s"
-    notify: haproxy reload
-    tags:
-      - setup
+    - name: append repo
+      apt_repository:
+        repo: "{{ haproxy_repo }}"
+        state: present
+        update_cache: true
+      when: haproxy_repo | length
+
+    - name: install pkg
+      apt:
+        name: "{{ haproxy_pkg }}"
+        state: present
+        install_recommends: false
 
   become: true
   tags:
     - haproxy
+    - install
+
+- name: setup
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    validate: "haproxy -c -f %s"
+  notify: haproxy reload
+  become: yes
+  tags:
+    - haproxy
+    - setup

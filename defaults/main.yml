@@ -1,6 +1,16 @@
 ---
 # defaults file for ansible-role-haproxy
 
+haproxy_dependencies:
+  - gnupg2
+  - python-apt
+  - software-properties-common
+
 haproxy_version: 1.8
-haproxy_pkg: "haproxy={{ haproxy_version }}.*"
-haproxy_dependencies: []
+haproxy_pkg:
+  - "haproxy={{ haproxy_version }}.*"
+
+haproxy_key: "{{ (ansible_distribution | lower == 'debian') | ternary('https://haproxy.debian.net/bernat.debian.org.gpg', '') }}"
+haproxy_repo: "{{ (ansible_distribution | lower == 'debian') | ternary(haproxy_debian_repo, haproxy_ubuntu_repo) }}"
+haproxy_debian_repo: "deb http://haproxy.debian.net {{ ansible_distribution_release }}-backports-{{ haproxy_version }} main"
+haproxy_ubuntu_repo: "ppa:vbernat/haproxy-{{ haproxy_version }}"
